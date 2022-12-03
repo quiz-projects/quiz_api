@@ -18,5 +18,7 @@ class OptionSerializer(serializers.ModelSerializer):
     class Meta:
         question = serializers.PrimaryKeyRelatedField(queryset=Question.objects.all())
         model = Option
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ('is_correct','question')
+        
 
