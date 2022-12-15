@@ -36,3 +36,22 @@ The Quiz API has the following endpoints:
 |POST| /api/answer/| Check the answer of the user|
 
 
+- Multiple-choice: a question that presents a list of possible answers, and the person taking the quiz must choose the correct answer from the options provided.
+
+- True/false: a question that presents a statement, and the person taking the quiz must determine whether the statement is true or false.
+
+- Fill-in-the-blank: a question that presents a sentence with one or more words missing, and the person taking the quiz must fill in the blanks with the correct words.
+
+- Matching: a question that presents a list of items on one side, and a list of corresponding items on the other side, and the person taking the quiz must match the items on one side with the correct items on the other side.
+
+- Short answer: a question that requires the person taking the quiz to provide a brief, written response to the question.
+
+- Essay: a question that requires the person taking the quiz to write a longer, more detailed response to the question.
+
+- Ordering: a question that presents a list of items that must be placed in a specific order, and the person taking the quiz must arrange the items in the correct order.
+
+- Ranking: a question that presents a list of items, and the person taking the quiz must rank the items in order of importance, preference, or some other criteria.
+
+- Grouping: a question that presents a list of items that must be organized into specific groups or categories, and the person taking the quiz must correctly group the items.
+
+- Picture identification: a question that presents a picture or image, and the person taking the quiz must identify the objects, people, or scenes depicted in the picture.
