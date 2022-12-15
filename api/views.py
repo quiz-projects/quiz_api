@@ -11,6 +11,7 @@ from .serializers import QuizSerializer, QuestionSerializer, OptionSerializer
 
 from .models import Quiz, Question, Option
 
+
 # View for get all quiz
 class QuizListView(APIView):
     def get(self, request: Request):
@@ -19,21 +20,19 @@ class QuizListView(APIView):
         return Response(serializer.data)
 
 class QuestionListView(APIView):
-    def get(self, request: Request, pk):
-        quiz = Quiz.objects.get(id=pk)
-        question = Question.objects.filter(quiz=quiz)
-        data = []
-        for q in question:
-            options = Option.objects.filter(question=q)
-            # Oprion serializer exclude 'is_correct' field
-            option_serializer = OptionSerializer(options, many=True, context={'test': 1}) 
-            data.append({
-                'question': q.title,
-                'id': q.id,
-                'options': option_serializer.data,
-            })
+    pass
 
-        
-     
-        return Response(data)
+
+class TopicListView(APIView):
+    pass
+
+class CheckAnswerView(APIView):
+    pass
+
+class GetResultView(APIView):
+    pass
+
+
+
+   
     
