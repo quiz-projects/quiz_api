@@ -12,6 +12,7 @@ class Student(models.Model):
         return self.name
 
 
+
 # Create your models here.
 class Quiz(models.Model):
     title = models.CharField(max_length=200)
@@ -20,6 +21,8 @@ class Quiz(models.Model):
 
     def __str__(self):
         return self.title
+
+
 
 
 class Topic(models.Model):
@@ -49,3 +52,18 @@ class Option(models.Model):
         return self.title
 
 
+class Result(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+    score = models.IntegerField()
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.student.name
+class ResultDetail(models.Model):
+    result = models.ForeignKey(Result, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    option = models.ForeignKey(Option, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.result.student.name
