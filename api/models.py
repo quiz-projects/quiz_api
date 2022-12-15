@@ -31,8 +31,11 @@ class Topic(models.Model):
         return self.title
 
 class Question(models.Model):
-    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
     title = models.TextField()
+    img = models.TextField(null=True, blank=True)
+    option_type = models.CharField(max_length=200)
+    
 
     def __str__(self):
         return self.title
