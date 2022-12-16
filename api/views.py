@@ -23,18 +23,47 @@ class QuizListView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors)
 
-class QuestionListView(APIView):
-    pass
-
-
 class TopicListView(APIView):
-    pass
+    def get(self, request: Request, pk):
+        topic_filter = Topic.objects.filter(quiz = pk)
+        topic = TopicSerializer(topic_filter, many = True)
+
+        quiz_filter = Quiz.objects.get(id = pk)
+        quiz = QuizSerializer(quiz_filter, many = False)
+
+        data = {
+            'quiz':{
+                'id':quiz.data['id'],
+                'title':quiz.data['title'],
+                'description':quiz.data['description'],
+                'topics':topic.data
+            }
+        }
+
+        return Response(data)
+
+    def post(self, request: Request):
+        data = request.data
+        serializer = TopicSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+class QuestionListView(APIView):
+    def get(self, request: Request):
+        pass
+    def post(self, request: Request):
+        pass
 
 class CheckAnswerView(APIView):
     pass
 
 class GetResultView(APIView):
-    pass
+    def get(self, request: Request):
+        pass
+    def post(self, request: Request):
+        pass
 
 
 
