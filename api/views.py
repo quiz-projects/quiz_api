@@ -88,8 +88,6 @@ class QuestionListView(APIView):
             
         return Response(data)
 
-
-
     def post(self, request: Request):
         data = request.data
         serializer = QuestionSerializer(data=data)
