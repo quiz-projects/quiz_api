@@ -96,6 +96,16 @@ class QuestionListView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors)
 
+class OptionListView(APIView):
+    def post(self, request: Request):
+        print('hi')
+        data = request.data
+        serializer = OptionSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
 class CheckAnswerView(APIView):
     pass
 

@@ -22,8 +22,7 @@ class OptionSerializer(serializers.ModelSerializer):
     class Meta:
         question = serializers.PrimaryKeyRelatedField(queryset=Question.objects.all())
         model = Option
-        # fields = '__all__'
-        exclude = ('is_correct','question')
+        fields = '__all__'
 
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
