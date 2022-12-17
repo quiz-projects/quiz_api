@@ -52,6 +52,7 @@ class TopicListView(APIView):
 
 class QuestionListView(APIView):
     def get(self, request: Request, pk):
+        print(pk)
         topic_filter = Topic.objects.get(id = pk)
         topic = TopicSerializer(topic_filter, many = False)
 
@@ -69,7 +70,7 @@ class QuestionListView(APIView):
                     'id':topic.data['id'],
                     'title':topic.data['title'],
                     'description':topic.data['description'],
-                    'questions_index':list(len(question.data)),
+                    'questions_index':list(range(0,len(question.data))),
                     'questions':[]
                 }
             }
