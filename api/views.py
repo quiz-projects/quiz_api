@@ -69,6 +69,7 @@ class QuestionListView(APIView):
                     'id':topic.data['id'],
                     'title':topic.data['title'],
                     'description':topic.data['description'],
+                    'questions_index':list(len(question.data)),
                     'questions':[]
                 }
             }
