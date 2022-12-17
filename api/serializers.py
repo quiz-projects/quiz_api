@@ -41,5 +41,7 @@ class ResultDetailSerializer(serializers.ModelSerializer):
         result = serializers.PrimaryKeyRelatedField(queryset = Result.objects.all())
         question = serializers.PrimaryKeyRelatedField(queryset = Question.objects.all())
         option = serializers.PrimaryKeyRelatedField(queryset = Option.objects.all())
+        model = ResultDetail
+        fields = '__all__'
         
 
