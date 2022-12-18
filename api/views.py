@@ -132,15 +132,51 @@ class GetResultView(APIView):
         }
 
         return Response(data)
-
-
-    def post(self, request: Request):
+    def post(self, request:Request):
         data = request.data
         serializer = ResultSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
+
+class ResultDetailView(APIView):
+    def post(self, request:Request):
+        data = request.data
+
+        option_id = data['option']
+        optoin = Option.objects.get(id = option_id)
+        optoin_serializer = OptionSerializer(optoin, many = False)
+
+        if optoin_serializer.data['is_correct'] == True:
+            result = Result.objects.filter(id = data['result'])[0]
+            result.score += 1
+            result.save()
+        serializer = ResultDetailSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+    def get(self, requst:Request, pk):
+        option = Option.objects.get(id = pk)
+        serializer = OptionSerializer(option, many = False)
+        print(serializer.data)
+        return Response(serializer.data)
+
+class StudentListView(APIView):
+    def post(self, request:Request):
+        data = request.data
+        serializer = StudentSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+    def get(self, request:Request, pk):
+        student = Student.objects.get(telegram_id = pk)
+        serializer = StudentSerializer(student, many = False)
+        return Response(serializer.data)
 
 
 

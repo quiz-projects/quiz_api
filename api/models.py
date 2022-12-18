@@ -7,7 +7,7 @@ class Student(models.Model):
     username = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
-        return self.last_name
+        return self.first_name
 
 # Create your models here.
 class Quiz(models.Model):
@@ -51,7 +51,7 @@ class Result(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.student.last_name
+        return self.student.first_name
 
 class ResultDetail(models.Model):
     result = models.ForeignKey(Result, on_delete=models.CASCADE)
@@ -59,4 +59,4 @@ class ResultDetail(models.Model):
     option = models.ForeignKey(Option, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.result.student.last_name
+        return self.result.student.first_name
