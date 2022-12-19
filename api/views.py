@@ -52,7 +52,6 @@ class TopicListView(APIView):
 
 class QuestionListView(APIView):
     def get(self, request: Request, pk):
-        print(pk)
         topic_filter = Topic.objects.get(id = pk)
         topic = TopicSerializer(topic_filter, many = False)
 
@@ -134,13 +133,20 @@ class GetResultView(APIView):
         return Response(data)
     def post(self, request:Request):
         data = request.data
-        serializer = ResultSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
+        result = Result.objects.filter(student = data['student'])
+        if result:
+            result2 = result.get(topic = data["topic"])
+            serializer1 = ResultSerializer(result2, many = False)
 
-class ResultDetailView(APIView):
+            return Response(serializer1.data)
+        else:
+            serializer = ResultSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors)
+
+class ResultDetailView(APIView): 
     def post(self, request:Request):
         data = request.data
 
@@ -149,7 +155,7 @@ class ResultDetailView(APIView):
         optoin_serializer = OptionSerializer(optoin, many = False)
 
         if optoin_serializer.data['is_correct'] == True:
-            result = Result.objects.filter(id = data['result'])[0]
+            result = Result.objects.get(id = data['result'])
             result.score += 1
             result.save()
         serializer = ResultDetailSerializer(data=data)
@@ -176,9 +182,4 @@ class StudentListView(APIView):
     def get(self, request:Request, pk):
         student = Student.objects.get(telegram_id = pk)
         serializer = StudentSerializer(student, many = False)
-        return Response(serializer.data)
-
-
-
-   
-    
+        return Response(serializer.data)  
