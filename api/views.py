@@ -135,10 +135,17 @@ class GetResultView(APIView):
         data = request.data
         result = Result.objects.filter(student = data['student'])
         if result:
-            result2 = result.get(topic = data["topic"])
-            serializer1 = ResultSerializer(result2, many = False)
+            result2 = result.filter(topic = data["topic"])
+            if result2:
+                serializer1 = ResultSerializer(result2[0], many = False)
 
-            return Response(serializer1.data)
+                return Response(serializer1.data)
+            else:
+                serializer = ResultSerializer(data=data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data)
+                return Response(serializer.errors)
         else:
             serializer = ResultSerializer(data=data)
             if serializer.is_valid():
