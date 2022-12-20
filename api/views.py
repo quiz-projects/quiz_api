@@ -165,9 +165,9 @@ class ResultDetailView(APIView):
         return Response(serializer.errors)
 
     def get(self, requst:Request, pk):
+        print(pk)
         option = Option.objects.get(id = pk)
         serializer = OptionSerializer(option, many = False)
-        print(serializer.data)
         return Response(serializer.data)
 
 class StudentListView(APIView):
