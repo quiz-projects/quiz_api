@@ -189,4 +189,12 @@ class StudentListView(APIView):
     def get(self, request:Request, pk):
         student = Student.objects.get(telegram_id = pk)
         serializer = StudentSerializer(student, many = False)
-        return Response(serializer.data)  
+        return Response(serializer.data)
+
+class UpdateStudent(APIView):
+    def post(self, request:Request, pk):
+        data = request.data
+        student = Student.objects.get(id = pk)
+        student.question_list = data["question_list"]
+        student.save()
+        return Response({"question_list":student.question_list})

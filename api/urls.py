@@ -6,7 +6,8 @@ from .views import (
     OptionListView, 
     GetResultView, 
     StudentListView,
-    ResultDetailView
+    ResultDetailView,
+    UpdateStudent
     )
 
 urlpatterns = [
@@ -21,5 +22,6 @@ urlpatterns = [
     path('student/', StudentListView.as_view()),
     path('student/<int:pk>/', StudentListView.as_view()),
     path('result_detail/', ResultDetailView.as_view()),
-    path('result_detail/<int:pk>/', ResultDetailView.as_view())
+    path('result_detail/<int:pk>/', ResultDetailView.as_view()),
+    path('updeteStudent/<int:pk>', UpdateStudent.as_view())
 ]
