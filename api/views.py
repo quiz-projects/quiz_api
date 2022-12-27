@@ -6,7 +6,7 @@ from rest_framework import status
 
 
 
-from .serializers import QuizSerializer, QuestionSerializer, OptionSerializer
+from .serializers import QuizSerializer, TopicSerializer,QuestionSerializer, OptionSerializer
 # Create your views here.
 
 from .models import Quiz, Topic, Question, Option
@@ -30,14 +30,14 @@ class QuizListView(APIView):
         return Response(quiz.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
 
 class TopicListView(APIView):
-    def get(self, request: Request, topic_id) -> Response:
+    def get(self, request: Request, quiz_id) -> Response:
         try:
-            topic = Topic.objects.get(id=topic_id)
+            quiz = Quiz.objects.get(id=quiz_id)
         except ObjectDoesNotExist:
-            return Response({'status': f'{topic_id} does not exists'})
+            return Response({'status': f'{quiz_id} does not exists'})
         
-        questions = topic.question.all()
-        serializer = QuestionSerializer(questions, many=True)
+        topics = quiz.topic.all()
+        serializer = TopicSerializer(topics, many=True)
 
         return Response(serializer.data)
 
