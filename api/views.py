@@ -42,14 +42,26 @@ class TopicListView(APIView):
         return Response(serializer.data)
 
 class QuestionListView(APIView):
+    def get(self, request: Request, topic_id) -> Response:
+        try:
+            topic = Topic.objects.get(id=topic_id)
+        except ObjectDoesNotExist:
+            return Response({'status': f'{topic_id} does not exists'})
+        
+        questions = topic.question.all()
+        serializer = QuestionSerializer(questions, many=True)
+
+        return Response(serializer.data)
+    
+class OptionListView(APIView):
     def get(self, request: Request, question_id) -> Response:
         try:
             question = Question.objects.get(id=question_id)
         except ObjectDoesNotExist:
             return Response({'status': f'{question_id} does not exists'})
         
-        option = question.option.all()
-        serializer = OptionSerializer(option, many=True)
+        options = question.option.all()
+        serializer = OptionSerializer(options, many=True)
 
         return Response(serializer.data)
 

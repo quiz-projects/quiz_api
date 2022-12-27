@@ -31,7 +31,7 @@ class Topic(models.Model):
 
 class Question(models.Model):
     title = models.TextField()
-    img = models.TextField(null=True, blank=True)
+    img = models.ImageField()
     option_type = models.CharField(max_length=200)
 
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE, related_name='question')
