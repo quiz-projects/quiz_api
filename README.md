@@ -3,6 +3,9 @@
 ## Description
 This project is a quiz game. The user is asked a question and has to answer it. The user can choose between 3 different levels of difficulty. The user can also choose to play again or quit the game.
 
+you can find this image from [this link](https://drive.google.com/file/d/1VkNCDh8shJ-sB0mnxQENgLjbGmnTdkHi/view?usp=sharing)
+<img src='model.png'>
+
 ## Features
 - The user can choose between 3 different levels of difficulty
 - The user can choose to play again or quit the game
