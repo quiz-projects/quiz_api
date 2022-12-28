@@ -31,8 +31,10 @@ you can find this image from [this link](https://drive.google.com/file/d/1VkNCDh
 The Quiz API has the following endpoints:
 |Methode | Endpoint | Description |
 |--------|----------|-------------|
-|GET|/api/quiz/|Get all questions|
-|GET|/api/quiz/<int:pk>/|Get a specific question|
+|GET|/api/quiz/|Get all quiz|
+|GET|/api/topic/<int:pk>/|Get a specific quiz topics|
+|GET|/api/question/<int:pk>/|Get a specific topics questions|
+|GET|/api/option/<int:pk>/|Get a specific questions options|
 |POST|/api/quiz/|Create a new question|
 |PUT|/api/quiz/<int:pk>/|Update a specific question|
 |DELETE|/api/quiz/<int:pk>/|Delete a specific question|
