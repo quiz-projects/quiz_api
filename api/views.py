@@ -9,7 +9,15 @@ from rest_framework import status
 from .serializers import QuizSerializer, TopicSerializer,QuestionSerializer, OptionSerializer
 # Create your views here.
 
-from .models import Quiz, Topic, Question, Option
+from .models import (
+    Quiz, 
+    Topic, 
+    Question, 
+    Option,
+    Student,
+    Result,
+    ResultDetail
+)
 
 
 # View for get all quiz
@@ -66,12 +74,32 @@ class OptionListView(APIView):
         return Response(serializer.data)
 
 class CheckAnswerView(APIView):
-    pass
+    def post(self, request: Request) -> Response:
+        telegram_id = request.data.get('telegram_id')
+        topic_id = request.data.get('topic_id')
+        question_id = request.data.get('question_id')
+        option_id = request.data.get('option_id')
+        
+        student = Student.get(telegram_id = telegram_id)
+        topic = Topic.objects.get(id=topic_id)
+        question = Question.objects.get(id=question_id)
+        option = Option.objects.get(id=option_id)
+
+        result, created = Result.objects.get_or_create(student=student, topic=topic)
+
+        if not created:
+            score = result.score
+            for i in result.resultdetail_set.all():
+                if i.option.is_correct:
+                    score += 1
+            result.score = score
+            result.save()
+
+        resultdetail = ResultDetail.objects.create(result=result, question=question, option=option)
+
+        return Response({'status': 'created'})
+
 
 class GetResultView(APIView):
-    pass
-
-
-
-   
-    
+    def post(self, request: Request) -> Response:
+        pass
