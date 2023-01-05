@@ -13,7 +13,8 @@ from .serializers import (
     QuestionSerializer, 
     OptionSerializer, 
     StudentSerializer,
-    ResultDetailSerializer
+    ResultDetailSerializer,
+    TopicQuestionSerializer
 )
 # Create your views here.
 
@@ -84,40 +85,20 @@ class TopicListView(APIView):
 class QuestionListView(APIView):
     def get(self, request: Request, pk):
         topic_filter = Topic.objects.get(id = pk)
-        topic = TopicSerializer(topic_filter, many = False)
-
-        question_filter = Question.objects.filter(topic = pk)
-        question = QuestionSerializer(question_filter, many = True)
+        topic = TopicSerializer(topic_filter)
+        topic_q = TopicQuestionSerializer(topic_filter)
 
         quiz_filter = Quiz.objects.get(id = topic.data['quiz'])
-        quiz = QuizSerializer(quiz_filter, many = False)
+        quiz = QuizSerializer(quiz_filter)
 
         data = {
             'quiz':{
-                'title':quiz.data['title'],
-                'description':quiz.data['description'],
-                'topic':{
-                    'id':topic.data['id'],
-                    'title':topic.data['title'],
-                    'description':topic.data['description'],
-                    'questions_index':list(range(0,len(question.data))),
-                    'questions':[]
-                }
+                'title': quiz.data['title'],
+                'description': quiz.data['description'],
+                'topic': topic_q.data
             }
         }
-        
-        for i in question.data:
-            option_filter = Option.objects.filter(question = i['id'])
-            option = OptionSerializer(option_filter, many = True)
-            
-            data['quiz']['topic']['questions'].append({
-                'id':i['id'],
-                'title':i['title'],
-                'img':i['img'],
-                'option_type':i["option_type"],
-                "options":option.data
-            })
-            
+
         return Response(data)
 
     def post(self, request: Request):

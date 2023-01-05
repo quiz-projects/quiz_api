@@ -17,11 +17,7 @@ class TopicSerializer(serializers.ModelSerializer):
         model = Topic
         fields = '__all__'
 
-class QuizTopicSerializer(serializers.ModelSerializer):
-    topic = TopicSerializer(many=True, read_only=True)
-    class Meta:
-        model = Quiz
-        fields = '__all__'
+
 
 class QuestionSerializer(serializers.ModelSerializer):
 
@@ -30,12 +26,13 @@ class QuestionSerializer(serializers.ModelSerializer):
         model = Question
         fields = '__all__'
 
+
 class OptionSerializer(serializers.ModelSerializer):
     class Meta:
         question = serializers.PrimaryKeyRelatedField(queryset=Question.objects.all())
         model = Option
         fields = '__all__'
-    
+        
 class ResultSerializer(serializers.ModelSerializer):
     class Meta:
         student = serializers.PrimaryKeyRelatedField(queryset = Student.objects.all())
@@ -50,5 +47,22 @@ class ResultDetailSerializer(serializers.ModelSerializer):
         option = serializers.PrimaryKeyRelatedField(queryset = Option.objects.all())
         model = ResultDetail
         fields = '__all__'
-        
 
+class QuizTopicSerializer(serializers.ModelSerializer):
+    topic = TopicSerializer(many=True, read_only=True)
+    class Meta:
+        model = Quiz
+        fields = '__all__'
+
+class QuestionOptionSerializer(serializers.ModelSerializer):
+    option = OptionSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Question
+        fields = '__all__'
+
+class TopicQuestionSerializer(serializers.ModelSerializer):
+    question = QuestionOptionSerializer(many=True, read_only=True)
+    class Meta:
+        model = Topic
+        fields = '__all__'
