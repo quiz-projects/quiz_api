@@ -69,10 +69,10 @@ class QuizListView(APIView):
 class TopicListView(APIView):
     def get(self, request: Request, pk):
         quiz = Quiz.objects.get(id = pk)
-        quiz = QuizTopicSerializer(quiz)
+        quiz_serializer = QuizTopicSerializer(quiz)
 
         return Response({
-            'quiz': quiz.data
+            'quiz': quiz_serializer.data
         })
 
     def post(self, request: Request):
@@ -189,8 +189,3 @@ class ResultDetailView(APIView):
         option = Option.objects.get(id = pk)
         serializer = OptionSerializer(option, many = False)
         return Response(serializer.data)
-
-
-class GetResultView(APIView):
-    def post(self, request: Request) -> Response:
-        pass
