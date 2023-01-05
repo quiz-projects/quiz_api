@@ -8,6 +8,7 @@ from rest_framework import status
 
 from .serializers import (
     QuizSerializer, 
+    QuizTopicSerializer,
     TopicSerializer,
     QuestionSerializer, 
     OptionSerializer, 
@@ -65,22 +66,12 @@ class QuizListView(APIView):
 
 class TopicListView(APIView):
     def get(self, request: Request, pk):
-        topic_filter = Topic.objects.filter(quiz = pk)
-        topic = TopicSerializer(topic_filter, many = True)
+        quiz = Quiz.objects.get(id = pk)
+        quiz = QuizTopicSerializer(quiz)
 
-        quiz_filter = Quiz.objects.get(id = pk)
-        quiz = QuizSerializer(quiz_filter, many = False)
-
-        data = {
-            'quiz':{
-                'id':quiz.data['id'],
-                'title':quiz.data['title'],
-                'description':quiz.data['description'],
-                'topics':topic.data
-            }
-        }
-
-        return Response(data)
+        return Response({
+            'quiz': quiz.data
+        })
 
     def post(self, request: Request):
         data = request.data

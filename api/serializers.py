@@ -6,6 +6,7 @@ class StudentSerializer(serializers.ModelSerializer):
     class Meta:
             model = Student
             fields = '__all__'
+
 class QuizSerializer(serializers.ModelSerializer):
     class Meta:
         model = Quiz
@@ -14,6 +15,12 @@ class QuizSerializer(serializers.ModelSerializer):
 class TopicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Topic
+        fields = '__all__'
+
+class QuizTopicSerializer(serializers.ModelSerializer):
+    topic = TopicSerializer(many=True, read_only=True)
+    class Meta:
+        model = Quiz
         fields = '__all__'
 
 class QuestionSerializer(serializers.ModelSerializer):
