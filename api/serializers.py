@@ -1,4 +1,4 @@
-from .models import Quiz, Topic, Question, Option, Student
+from .models import Quiz, Topic, Question, Option, Student, Result, ResultDetail
 from rest_framework import serializers
 
 
@@ -29,5 +29,20 @@ class OptionSerializer(serializers.ModelSerializer):
         model = Option
         # fields = '__all__'
         exclude = ('is_correct','question')
+    
+class ResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        student = serializers.PrimaryKeyRelatedField(queryset = Student.objects.all())
+        topic = serializers.PrimaryKeyRelatedField(queryset = Topic.objects.all())
+        model = Result
+        fields = '__all__'
+    
+class ResultDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        result = serializers.PrimaryKeyRelatedField(queryset = Result.objects.all())
+        question = serializers.PrimaryKeyRelatedField(queryset = Question.objects.all())
+        option = serializers.PrimaryKeyRelatedField(queryset = Option.objects.all())
+        model = ResultDetail
+        fields = '__all__'
         
 

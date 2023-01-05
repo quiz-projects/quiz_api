@@ -6,7 +6,14 @@ from rest_framework import status
 
 
 
-from .serializers import QuizSerializer, TopicSerializer,QuestionSerializer, OptionSerializer, StudentSerializer
+from .serializers import (
+    QuizSerializer, 
+    TopicSerializer,
+    QuestionSerializer, 
+    OptionSerializer, 
+    StudentSerializer,
+    ResultDetailSerializer
+)
 # Create your views here.
 
 from .models import (
@@ -33,85 +40,136 @@ class StudentListView(APIView):
         serializer = StudentSerializer(student, many = False)
         return Response(serializer.data)
 
+class UpdateStudentView(APIView):
+    def post(self, request:Request, pk):
+        data = request.data
+        student = Student.objects.get(id = pk)
+        student.question_list = data["question_list"]
+        student.save()
+        return Response({"question_list":student.question_list})
 
 # View for get all quiz
 class QuizListView(APIView):
     def get(self, request: Request):
-        '''gets all quiz objects return list of simple data'''
         quiz = Quiz.objects.all()
         serializer = QuizSerializer(quiz, many=True)
         return Response(serializer.data)
-    
-    def post(self, request: Request) -> Response:
-        '''this fucntion creates quiz object'''
-        quiz = QuizSerializer(data = request.data)
 
-        if quiz.is_valid():
-            quiz.save()
-            return Response({'status': 'created'})
-        return Response(quiz.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
+    def post(self, request: Request):
+        data = request.data
+        serializer = QuizSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
 
 class TopicListView(APIView):
-    def get(self, request: Request, quiz_id) -> Response:
-        try:
-            quiz = Quiz.objects.get(id=quiz_id)
-        except ObjectDoesNotExist:
-            return Response({'status': f'{quiz_id} does not exists'})
-        
-        topics = quiz.topic.all()
-        serializer = TopicSerializer(topics, many=True)
+    def get(self, request: Request, pk):
+        topic_filter = Topic.objects.filter(quiz = pk)
+        topic = TopicSerializer(topic_filter, many = True)
 
-        return Response(serializer.data)
+        quiz_filter = Quiz.objects.get(id = pk)
+        quiz = QuizSerializer(quiz_filter, many = False)
+
+        data = {
+            'quiz':{
+                'id':quiz.data['id'],
+                'title':quiz.data['title'],
+                'description':quiz.data['description'],
+                'topics':topic.data
+            }
+        }
+
+        return Response(data)
+
+    def post(self, request: Request):
+        data = request.data
+        serializer = TopicSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
 
 class QuestionListView(APIView):
-    def get(self, request: Request, topic_id) -> Response:
-        try:
-            topic = Topic.objects.get(id=topic_id)
-        except ObjectDoesNotExist:
-            return Response({'status': f'{topic_id} does not exists'})
-        
-        questions = topic.question.all()
-        serializer = QuestionSerializer(questions, many=True)
+    def get(self, request: Request, pk):
+        topic_filter = Topic.objects.get(id = pk)
+        topic = TopicSerializer(topic_filter, many = False)
 
-        return Response(serializer.data)
-    
+        question_filter = Question.objects.filter(topic = pk)
+        question = QuestionSerializer(question_filter, many = True)
+
+        quiz_filter = Quiz.objects.get(id = topic.data['quiz'])
+        quiz = QuizSerializer(quiz_filter, many = False)
+
+        data = {
+            'quiz':{
+                'title':quiz.data['title'],
+                'description':quiz.data['description'],
+                'topic':{
+                    'id':topic.data['id'],
+                    'title':topic.data['title'],
+                    'description':topic.data['description'],
+                    'questions_index':list(range(0,len(question.data))),
+                    'questions':[]
+                }
+            }
+        }
+        
+        for i in question.data:
+            option_filter = Option.objects.filter(question = i['id'])
+            option = OptionSerializer(option_filter, many = True)
+            
+            data['quiz']['topic']['questions'].append({
+                'id':i['id'],
+                'title':i['title'],
+                'img':i['img'],
+                'option_type':i["option_type"],
+                "options":option.data
+            })
+            
+        return Response(data)
+
+    def post(self, request: Request):
+        data = request.data
+        serializer = QuestionSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
 class OptionListView(APIView):
-    def get(self, request: Request, question_id) -> Response:
-        try:
-            question = Question.objects.get(id=question_id)
-        except ObjectDoesNotExist:
-            return Response({'status': f'{question_id} does not exists'})
-        
-        options = question.option.all()
-        serializer = OptionSerializer(options, many=True)
+    def post(self, request: Request):
+        print('hi')
+        data = request.data
+        serializer = OptionSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
 
-        return Response(serializer.data)
+class ResultDetailView(APIView): 
+    def post(self, request:Request):
+        data = request.data
 
-class CheckAnswerView(APIView):
-    def post(self, request: Request) -> Response:
-        telegram_id = request.data.get('telegram_id')
-        topic_id = request.data.get('topic_id')
-        question_id = request.data.get('question_id')
-        option_id = request.data.get('option_id')
-        
-        student = Student.get(telegram_id = telegram_id)
-        topic = Topic.objects.get(id=topic_id)
-        question = Question.objects.get(id=question_id)
-        option = Option.objects.get(id=option_id)
+        option_id = data['option']
+        optoin = Option.objects.get(id = option_id)
+        optoin_serializer = OptionSerializer(optoin, many = False)
 
-        result, created = Result.objects.get_or_create(student=student, topic=topic)
-
-        if not created:
-            score = result.score
-            for i in result.resultdetail_set.all():
-                if i.option.is_correct:
-                    score += 1
-            result.score = score
+        if optoin_serializer.data['is_correct'] == True:
+            result = Result.objects.get(id = data['result'])
+            result.score += 1
             result.save()
+        serializer = ResultDetailSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
 
-        resultdetail = ResultDetail.objects.create(result=result, question=question, option=option)
-
-        return Response({'status': 'created'})
+    def get(self, requst:Request, pk):
+        print(pk)
+        option = Option.objects.get(id = pk)
+        serializer = OptionSerializer(option, many = False)
+        return Response(serializer.data)
 
 
 class GetResultView(APIView):
