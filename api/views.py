@@ -6,7 +6,7 @@ from rest_framework import status
 
 
 
-from .serializers import QuizSerializer, TopicSerializer,QuestionSerializer, OptionSerializer
+from .serializers import QuizSerializer, TopicSerializer,QuestionSerializer, OptionSerializer, StudentSerializer
 # Create your views here.
 
 from .models import (
@@ -18,6 +18,20 @@ from .models import (
     Result,
     ResultDetail
 )
+
+class StudentListView(APIView):
+    def post(self, request:Request):
+        data = request.data
+        serializer = StudentSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+    def get(self, request:Request, pk):
+        student = Student.objects.get(telegram_id = pk)
+        serializer = StudentSerializer(student, many = False)
+        return Response(serializer.data)
 
 
 # View for get all quiz

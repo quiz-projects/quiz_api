@@ -1,6 +1,11 @@
-from .models import Quiz, Topic, Question, Option
+from .models import Quiz, Topic, Question, Option, Student
 from rest_framework import serializers
 
+
+class StudentSerializer(serializers.ModelSerializer):
+    class Meta:
+            model = Student
+            fields = '__all__'
 class QuizSerializer(serializers.ModelSerializer):
     class Meta:
         model = Quiz
