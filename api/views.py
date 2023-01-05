@@ -125,20 +125,23 @@ class ResultDetailView(APIView):
 
         option_id = data['option']
         optoin = Option.objects.get(id = option_id)
-        optoin_serializer = OptionSerializer(optoin, many = False)
 
-        if optoin_serializer.data['is_correct'] == True:
+        optoin_serializer = OptionSerializer(optoin)
+
+        if optoin_serializer.data['is_correct']:
             result = Result.objects.get(id = data['result'])
             result.score += 1
             result.save()
+
         serializer = ResultDetailSerializer(data=data)
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
+
         return Response(serializer.errors)
 
     def get(self, requst:Request, pk):
-        print(pk)
         option = Option.objects.get(id = pk)
         serializer = OptionSerializer(option, many = False)
         return Response(serializer.data)
