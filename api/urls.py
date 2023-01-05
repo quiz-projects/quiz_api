@@ -5,6 +5,7 @@ from .views import (
     TopicListView,
     OptionListView,
     StudentListView,
+    GetResultView,
     ResultDetailView,
     UpdateStudentView,
 )
@@ -18,6 +19,8 @@ urlpatterns = [
     path('question/', QuestionListView.as_view()),
     path('question/<int:pk>/', QuestionListView.as_view()),
     path('option/', OptionListView.as_view()),
+    path('result/',GetResultView.as_view()),
+    path('result/<int:s_id>/<int:t_id>/',GetResultView.as_view()),
     path('result_detail/', ResultDetailView.as_view()),
     path('result_detail/<int:pk>/', ResultDetailView.as_view()),
     path('updeteStudent/<int:pk>', UpdateStudentView.as_view()),

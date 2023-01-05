@@ -13,6 +13,7 @@ from .serializers import (
     QuestionSerializer, 
     OptionSerializer, 
     StudentSerializer,
+    ResultSerializer,
     ResultDetailSerializer,
     TopicQuestionSerializer
 )
@@ -118,6 +119,49 @@ class OptionListView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
+    
+class GetResultView(APIView):
+    def get(self, request: Request, s_id, t_id):
+        result_filter_student = Result.objects.filter(student = s_id)
+        result_filter_topic = result_filter_student.filter(topic = t_id)
+        result = ResultSerializer(result_filter_topic, many = True)
+
+        student_filter = Student.objects.get(id = s_id)
+        student = StudentSerializer(student_filter, many = False)
+
+        data = {
+            'student':{
+                'id':student.data['id'],
+                'first_name':student.data['first_name'],
+                'last_name':student.data['last_name'],
+                'telegram_id':student.data['telegram_id'],
+                'username':student.data['username'],
+                'results':result.data
+            }
+        }
+
+        return Response(data)
+    def post(self, request:Request):
+        data = request.data
+        result = Result.objects.filter(student = data['student'])
+        if result:
+            result2 = result.filter(topic = data["topic"])
+            if result2:
+                serializer1 = ResultSerializer(result2[0], many = False)
+
+                return Response(serializer1.data)
+            else:
+                serializer = ResultSerializer(data=data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data)
+                return Response(serializer.errors)
+        else:
+            serializer = ResultSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors)
 
 class ResultDetailView(APIView): 
     def post(self, request:Request):
