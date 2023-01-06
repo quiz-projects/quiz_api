@@ -169,7 +169,7 @@ class GetResultView(APIView):
 class UpdateResultView(APIView):
     def post(self, request: Request, pk) -> Request:
         result = Result.objects.get(id=pk)
-        serializer = ResultSerializer(result, data=request.data)
+        serializer = ResultSerializer(result, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
