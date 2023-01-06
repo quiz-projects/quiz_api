@@ -7,7 +7,9 @@ from .views import (
     StudentListView,
     GetResultView,
     ResultDetailView,
+    UpdateResultView,
     UpdateStudentView,
+    CreateDabaseView
 )
 
 urlpatterns = [
@@ -21,7 +23,9 @@ urlpatterns = [
     path('option/', OptionListView.as_view()),
     path('result/',GetResultView.as_view()),
     path('result/<int:s_id>/<int:t_id>/',GetResultView.as_view()),
+    path('update_result/<int:pk>', UpdateResultView.as_view()),
     path('result_detail/', ResultDetailView.as_view()),
     path('result_detail/<int:pk>/', ResultDetailView.as_view()),
     path('updeteStudent/<int:pk>', UpdateStudentView.as_view()),
+    path('create_database/', CreateDabaseView.as_view())
 ]

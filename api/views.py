@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
 
+import csv
+
 
 
 from .serializers import (
@@ -163,6 +165,18 @@ class GetResultView(APIView):
                 return Response(serializer.data)
             return Response(serializer.errors)
 
+
+class UpdateResultView(APIView):
+    def post(self, request: Request, pk) -> Request:
+        result = Result.objects.get(id=pk)
+        serializer = ResultSerializer(result, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+
 class ResultDetailView(APIView): 
     def post(self, request:Request):
         data = request.data
@@ -189,3 +203,22 @@ class ResultDetailView(APIView):
         option = Option.objects.get(id = pk)
         serializer = OptionSerializer(option, many = False)
         return Response(serializer.data)
+
+
+class CreateDabaseView(APIView):
+    def post(self, request: Request) -> Response:
+        data = request.FILES['data']
+        splitdata = data.read().decode().splitlines()
+
+        spamreader = csv.reader(splitdata)
+
+        topic_name = data.name
+        header = next(spamreader)
+        
+        topic = Topic.objects.create(title = topic_name)
+        for row in spamreader:
+            print(row)
+            break
+        
+
+        return Response({'status': 'ok'})
