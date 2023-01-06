@@ -27,5 +27,5 @@ urlpatterns = [
     path('result_detail/', ResultDetailView.as_view()),
     path('result_detail/<int:pk>/', ResultDetailView.as_view()),
     path('updeteStudent/<int:pk>', UpdateStudentView.as_view()),
-    path('create_database/', CreateDabaseView.as_view())
+    path('create_database/<int:quiz_id>', CreateDabaseView.as_view())
 ]

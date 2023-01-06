@@ -206,19 +206,25 @@ class ResultDetailView(APIView):
 
 
 class CreateDabaseView(APIView):
-    def post(self, request: Request) -> Response:
+    def post(self, request: Request, quiz_id: int) -> Response:
+        description = request.data.get('description', 'Empty')
+        option_type = request.data.get('option_type', 'ochiq')
         data = request.FILES['data']
-        splitdata = data.read().decode().splitlines()
 
+        splitdata = data.read().decode().splitlines()
         spamreader = csv.reader(splitdata)
 
         topic_name = data.name
         header = next(spamreader)
         
-        topic = Topic.objects.create(title = topic_name)
-        for row in spamreader:
-            print(row)
-            break
+        quiz = Quiz.objects.get(id=quiz_id)
+        topic, created = Topic.objects.get_or_create(title = topic_name, description = description, quiz = quiz)
         
-
-        return Response({'status': 'ok'})
+        for row in spamreader:
+            question = Question.objects.create(title = row[1], option_type=option_type, img = row[-1], topic=topic)
+            
+            for i in range(2, 6):
+                question.option.create(title = row[i], is_correct = row[i]==row[-2])
+        
+        serializer = TopicQuestionSerializer(topic)
+        return Response(serializer.data)
