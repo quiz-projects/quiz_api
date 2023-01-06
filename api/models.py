@@ -48,6 +48,8 @@ class Option(models.Model):
 class Result(models.Model):
     score   = models.IntegerField(default=0)
     date    = models.DateTimeField(auto_now_add=True)
+    current_question_result = models.IntegerField(default=0)
+    current_question_number = models.IntegerField(default=0)
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     topic   = models.ForeignKey(Topic, on_delete=models.CASCADE)
