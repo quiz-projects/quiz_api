@@ -43,7 +43,7 @@ class StudentListView(APIView):
 
     def get(self, request:Request, pk):
         student = Student.objects.get(telegram_id = pk)
-        serializer = StudentSerializer(student, many = False)
+        serializer = StudentSerializer(student)
         return Response(serializer.data)
 
 class UpdateStudentView(APIView):
@@ -71,6 +71,9 @@ class QuizListView(APIView):
 
 class TopicListView(APIView):
     def get(self, request: Request, pk):
+        # when user asks for topic result gonna create
+        result = Result.objects.create()
+
         quiz = Quiz.objects.get(id = pk)
         quiz_serializer = QuizTopicSerializer(quiz)
 
@@ -129,12 +132,12 @@ class OptionListView(APIView):
         return Response(serializer.errors)
     
 class GetResultView(APIView):
-    def get(self, request: Request, s_id, t_id):
-        result_filter_student = Result.objects.filter(student = s_id)
-        result_filter_topic = result_filter_student.filter(topic = t_id)
+    def get(self, request: Request, telegram_id, topic_id):
+        result_filter_student = Result.objects.filter(student = telegram_id)
+        result_filter_topic = result_filter_student.filter(topic = topic_id)
         result = ResultSerializer(result_filter_topic, many = True)
 
-        student_filter = Student.objects.get(id = s_id)
+        student_filter = Student.objects.get(id = telegram_id)
         student = StudentSerializer(student_filter, many = False)
 
         data = {
@@ -151,25 +154,17 @@ class GetResultView(APIView):
         return Response(data)
     def post(self, request:Request):
         data = request.data
-        result = Result.objects.filter(student = data['student'])
-        if result:
-            result2 = result.filter(topic = data["topic"])
-            if result2:
-                serializer1 = ResultSerializer(result2[0], many = False)
 
-                return Response(serializer1.data)
-            else:
-                serializer = ResultSerializer(data=data)
-                if serializer.is_valid():
-                    serializer.save()
-                    return Response(serializer.data)
-                return Response(serializer.errors)
-        else:
-            serializer = ResultSerializer(data=data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors)
+        serializer = ResultSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        
+        return Response(serializer.errors)
+
+
+        
 
 
 class UpdateResultView(APIView):
