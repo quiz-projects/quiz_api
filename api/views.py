@@ -95,7 +95,7 @@ class QuestionListView(APIView):
         topic_filter = Topic.objects.get(id = topic_id)
 
         # Creates result for the given student and topic
-        Result.objects.get_or_create(student=student, topic=topic_filter)
+        Result.objects.create(student=student, topic=topic_filter)
 
         # Random questions with the given number which is count
         question_filter = Question.objects.filter(topic=topic_filter).order_by('?')[:count]
@@ -122,19 +122,22 @@ class QuestionListView(APIView):
     def post(self, request: Request):
         data = request.data
         serializer = QuestionSerializer(data=data)
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
+
         return Response(serializer.errors)
 
 class OptionListView(APIView):
     def post(self, request: Request):
-        print('hi')
         data = request.data
         serializer = OptionSerializer(data=data)
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
+            
         return Response(serializer.errors)
     
 class GetResultView(APIView):
@@ -156,8 +159,8 @@ class GetResultView(APIView):
                 'results':result.data
             }
         }
-
         return Response(data)
+
     def post(self, request:Request):
         data = request.data
 
