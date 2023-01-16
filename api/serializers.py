@@ -57,12 +57,20 @@ class QuizTopicSerializer(serializers.ModelSerializer):
 class QuestionOptionSerializer(serializers.ModelSerializer):
     option = OptionSerializer(many=True, read_only=True)
 
+    def to_representation(self, instance):
+        print('hello from question')
+        return super().to_representation(instance)
+
     class Meta:
         model = Question
         fields = '__all__'
 
 class TopicQuestionSerializer(serializers.ModelSerializer):
     question = QuestionOptionSerializer(many=True, read_only=True)
+
+    def to_representation(self, instance):
+        print('hello world', type(instance))
+        return super().to_representation(instance)
     class Meta:
         model = Topic
         fields = '__all__'

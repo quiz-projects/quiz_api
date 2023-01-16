@@ -17,7 +17,8 @@ from .serializers import (
     StudentSerializer,
     ResultSerializer,
     ResultDetailSerializer,
-    TopicQuestionSerializer
+    TopicQuestionSerializer,
+    QuestionOptionSerializer
 )
 # Create your views here.
 
@@ -86,10 +87,13 @@ class TopicListView(APIView):
         return Response(serializer.errors)
 
 class QuestionListView(APIView):
-    def get(self, request: Request, pk):
+    def get(self, request: Request, pk: int, count: int):
         topic_filter = Topic.objects.get(id = pk)
+        question_filter = Question.objects.filter(topic=topic_filter).order_by('?')[:count]
+
         topic = TopicSerializer(topic_filter)
-        topic_q = TopicQuestionSerializer(topic_filter)
+        questions = QuestionOptionSerializer(question_filter, many=True)
+        topic_q = TopicSerializer(topic_filter)
 
         quiz_filter = Quiz.objects.get(id = topic.data['quiz'])
         quiz = QuizSerializer(quiz_filter)
@@ -101,6 +105,8 @@ class QuestionListView(APIView):
                 'topic': topic_q.data
             }
         }
+
+        data['quiz']['topic']['question'] = questions.data
 
         return Response(data)
 
