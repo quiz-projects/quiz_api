@@ -22,7 +22,7 @@ urlpatterns = [
     path('question/<int:topic_id>/<int:count>/', QuestionListView.as_view()),
     path('option/', OptionListView.as_view()),
     path('result/',GetResultView.as_view()),
-    path('result/<int:telegram_id>/<int:topic_id>/',GetResultView.as_view()),
+    # path('result/<int:telegram_id>/<int:topic_id>/',GetResultView.as_view()),
     path('update_result/<int:pk>', UpdateResultView.as_view()),
     path('result_detail/', ResultDetailView.as_view()),
     path('result_detail/<int:pk>/', ResultDetailView.as_view()),
