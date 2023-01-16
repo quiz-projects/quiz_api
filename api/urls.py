@@ -19,7 +19,7 @@ urlpatterns = [
     path('topic/', TopicListView.as_view()),
     path('topic/<int:pk>/', TopicListView.as_view()),
     path('question/', QuestionListView.as_view()),
-    path('question/<int:pk>/<int:count>/', QuestionListView.as_view()),
+    path('question/<int:topic_id>/<int:count>/', QuestionListView.as_view()),
     path('option/', OptionListView.as_view()),
     path('result/',GetResultView.as_view()),
     path('result/<int:telegram_id>/<int:topic_id>/',GetResultView.as_view()),

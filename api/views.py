@@ -71,8 +71,6 @@ class QuizListView(APIView):
 
 class TopicListView(APIView):
     def get(self, request: Request, pk):
-        # when user asks for topic result gonna create
-        result = Result.objects.create()
 
         quiz = Quiz.objects.get(id = pk)
         quiz_serializer = QuizTopicSerializer(quiz)
@@ -90,8 +88,16 @@ class TopicListView(APIView):
         return Response(serializer.errors)
 
 class QuestionListView(APIView):
-    def get(self, request: Request, pk: int, count: int):
-        topic_filter = Topic.objects.get(id = pk)
+    def get(self, request: Request, topic_id: int, count: int):
+        telegram_id = request.query_params.get('telegram_id')
+        
+        student = Student.objects.get(telegram_id=telegram_id)
+        topic_filter = Topic.objects.get(id = topic_id)
+
+        # Creates result for the given student and topic
+        Result.objects.get_or_create(student=student, topic=topic_filter)
+
+        # Random questions with the given number which is count
         question_filter = Question.objects.filter(topic=topic_filter).order_by('?')[:count]
 
         topic = TopicSerializer(topic_filter)
