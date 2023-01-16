@@ -35,7 +35,7 @@ class OptionSerializer(serializers.ModelSerializer):
         
 class ResultSerializer(serializers.ModelSerializer):
     class Meta:
-        student = serializers.PrimaryKeyRelatedField(queryset = Student.objects.all())
+        student = serializers.SlugRelatedField(slug_field = 'telegram_id',queryset = Student.objects.all())
         topic = serializers.PrimaryKeyRelatedField(queryset = Topic.objects.all())
         model = Result
         fields = '__all__'
