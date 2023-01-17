@@ -140,7 +140,7 @@ class QuestionListView(APIView):
         topic_filter = Topic.objects.get(id = topic_id)
 
         # Creates result for the given student and topic
-        Result.objects.create(student=student, topic=topic_filter)
+        result = Result.objects.create(student=student, topic=topic_filter)
 
         # Random questions with the given number which is count
         question_filter = Question.objects.filter(topic=topic_filter).order_by('?')[:count]
@@ -156,6 +156,7 @@ class QuestionListView(APIView):
             'quiz':{
                 'title': quiz.data['title'],
                 'description': quiz.data['description'],
+                'result': result.id,
                 'topic': topic_q.data
             }
         }
@@ -206,13 +207,11 @@ class ResultView(APIView):
     def get(self, request: Request, telegram_id, topic_id):
         '''Returns list of result data for given telegram_id and topic_id'''
 
-        result_filter_student = Result.objects.filter(student = telegram_id)
-        result_filter_topic = result_filter_student.filter(topic = topic_id)
-
-        result = ResultSerializer(result_filter_topic, many = True)
-
-        student_filter = Student.objects.get(telegram_id = telegram_id)
-        student = StudentSerializer(student_filter)
+        student = Student.objects.get(telegram_id = telegram_id)
+        results = student.result_set.filter(topic = topic_id)
+        
+        result = ResultSerializer(results, many = True)
+        student = StudentSerializer(student)
 
         data = {
             'student':{
@@ -244,21 +243,35 @@ class ResultView(APIView):
         
         return Response(serializer.errors)
 
-class ResultDetailView(APIView): 
+class ResultDetailView(APIView):
     def post(self, request:Request):
-        data = request.data
+        '''Creates resultdetail object for given data body
+        
+        request.data = [ 
+            {
+                "option": id,
+                "question": id,
+                "result": id,
+            },
+            {
+                "option": id,
+                "question": id,
+                "result": id,
+            }
+        ]
+        '''
+        data_list = request.data
 
-        option_id = data['option']
-        optoin = Option.objects.get(id = option_id)
+        for data in data_list:
+            option_id = data['option']
+            option = Option.objects.get(id = option_id)
 
-        optoin_serializer = OptionSerializer(optoin)
+            if option.is_correct:
+                result = Result.objects.get(id = data['result'])
+                result.score += 1
+                result.save()
 
-        if optoin_serializer.data['is_correct']:
-            result = Result.objects.get(id = data['result'])
-            result.score += 1
-            result.save()
-
-        serializer = ResultDetailSerializer(data=data)
+        serializer = ResultDetailSerializer(data=data_list, many=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -267,13 +280,28 @@ class ResultDetailView(APIView):
         return Response(serializer.errors)
 
     def get(self, requst:Request, pk):
+        '''Returns option data for given pk (pk is option id)'''
+
         option = Option.objects.get(id = pk)
-        serializer = OptionSerializer(option, many = False)
+        serializer = OptionSerializer(option)
+
         return Response(serializer.data)
 
 
 class CreateDabaseView(APIView):
     def post(self, request: Request, quiz_id: int) -> Response:
+        '''Creates database for given csv file
+        topic_name = file_name
+
+        request.data = {
+            "description": "",
+            "option_type": ""
+        }
+
+        request.FILES['data'] => 
+            header = id,question,option01,option02,option03,option04,answer,image_link
+        '''
+
         description = request.data.get('description', 'Empty')
         option_type = request.data.get('option_type', 'ochiq')
         data = request.FILES['data']
@@ -281,7 +309,7 @@ class CreateDabaseView(APIView):
         splitdata = data.read().decode().splitlines()
         spamreader = csv.reader(splitdata)
 
-        topic_name = data.name
+        topic_name = data.name.split('.')[0]
         header = next(spamreader)
         
         quiz = Quiz.objects.get(id=quiz_id)
