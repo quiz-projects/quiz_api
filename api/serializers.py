@@ -13,6 +13,7 @@ class QuizSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class TopicSerializer(serializers.ModelSerializer):
+    quiz = serializers.SlugRelatedField(slug_field='title', queryset=Quiz.objects.all())
     class Meta:
         model = Topic
         fields = '__all__'
@@ -29,14 +30,13 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 class OptionSerializer(serializers.ModelSerializer):
     class Meta:
-        question = serializers.PrimaryKeyRelatedField(queryset=Question.objects.all())
         model = Option
         fields = '__all__'
         
 class ResultSerializer(serializers.ModelSerializer):
+    student = serializers.SlugRelatedField(slug_field = 'telegram_id',queryset = Student.objects.all())
+    topic = serializers.SlugRelatedField(slug_field='title',queryset = Topic.objects.all())
     class Meta:
-        student = serializers.SlugRelatedField(slug_field = 'telegram_id',queryset = Student.objects.all())
-        topic = serializers.PrimaryKeyRelatedField(queryset = Topic.objects.all())
         model = Result
         fields = '__all__'
     

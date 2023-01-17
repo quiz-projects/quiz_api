@@ -5,20 +5,19 @@ class Student(models.Model):
     last_name   = models.CharField(max_length=200, null=True, blank=True)
     username    = models.CharField(max_length=200, null=True, blank=True)
     telegram_id = models.IntegerField(unique=True)
-    question_list = models.JSONField(max_length=200, null=True, blank=True)
 
     def __str__(self):
         return self.first_name
 
 # Create your models here.
 class Quiz(models.Model):
-    title       = models.CharField(max_length=200)
+    title       = models.CharField(max_length=200, unique=True)
     description = models.TextField()
 
     def __str__(self):
         return self.title
 class Topic(models.Model):
-    title       = models.CharField(max_length=200)
+    title       = models.CharField(max_length=200, unique=True)
     description = models.TextField()
     quiz        = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='topic')
 
