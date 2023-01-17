@@ -6,8 +6,6 @@ from rest_framework import status
 
 import csv
 
-
-
 from .serializers import (
     QuizSerializer, 
     QuizTopicSerializer,
@@ -60,14 +58,6 @@ class StudentListView(APIView):
 
         return Response(serializer.data)
 
-class UpdateStudentView(APIView):
-    def post(self, request:Request, pk):
-        data = request.data
-        student = Student.objects.get(id = pk)
-        student.question_list = data["question_list"]
-        student.save()
-        return Response({"question_list":student.question_list})
-
 # View for get all quiz
 class QuizListView(APIView):
     def get(self, request: Request):
@@ -97,7 +87,7 @@ class QuizListView(APIView):
 
 class TopicListView(APIView):
     def get(self, request: Request, pk):
-        '''Returns topic given the pk (pk is quiz id)'''
+        '''Returns topic given the pk (pk is quiz_id)'''
 
         quiz = Quiz.objects.get(id = pk)
         quiz_serializer = QuizTopicSerializer(quiz)
@@ -262,6 +252,7 @@ class ResultDetailView(APIView):
         '''
         data_list = request.data
 
+        # Addes score result for correct option id
         for data in data_list:
             option_id = data['option']
             option = Option.objects.get(id = option_id)
@@ -271,6 +262,7 @@ class ResultDetailView(APIView):
                 result.score += 1
                 result.save()
 
+        # Addes resultdeatail for all list of dictionary data
         serializer = ResultDetailSerializer(data=data_list, many=True)
 
         if serializer.is_valid():
@@ -279,7 +271,7 @@ class ResultDetailView(APIView):
 
         return Response(serializer.errors)
 
-    def get(self, requst:Request, pk):
+    def get(self, requst: Request, pk):
         '''Returns option data for given pk (pk is option id)'''
 
         option = Option.objects.get(id = pk)
@@ -291,7 +283,8 @@ class ResultDetailView(APIView):
 class CreateDabaseView(APIView):
     def post(self, request: Request, quiz_id: int) -> Response:
         '''Creates database for given csv file
-        topic_name = file_name
+
+        topic_name = file_name : topic_name is given csv file name
 
         request.data = {
             "description": "",
