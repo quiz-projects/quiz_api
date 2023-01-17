@@ -149,7 +149,7 @@ class QuestionListView(APIView):
         questions = QuestionOptionSerializer(question_filter, many=True)
         topic_q = TopicSerializer(topic_filter)
 
-        quiz_filter = Quiz.objects.get(id = topic.data['quiz'])
+        quiz_filter = Quiz.objects.get(title = topic.data['quiz'])
         quiz = QuizSerializer(quiz_filter)
 
         data = {
@@ -234,7 +234,7 @@ class ResultView(APIView):
             "topic": title
         }
         '''
-        
+
         data = request.data
         serializer = ResultSerializer(data=data)
 
