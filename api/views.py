@@ -18,6 +18,8 @@ from .serializers import (
     TopicQuestionSerializer,
     QuestionOptionSerializer
 )
+
+from .data_serializers import StudentsSerializer
 # Create your views here.
 
 from .models import (
@@ -193,6 +195,15 @@ class OptionListView(APIView):
             
         return Response(serializer.errors)
     
+class GetResultView(APIView):
+    def get(self, request: Request):
+        '''Returns all students, results, resultdetails'''
+        students = Student.objects.all()
+        serializer = StudentsSerializer(students, many=True)
+
+        return Response(serializer.data)
+
+
 class ResultView(APIView):
     def get(self, request: Request, telegram_id, topic_id):
         '''Returns list of result data for given telegram_id and topic_id'''

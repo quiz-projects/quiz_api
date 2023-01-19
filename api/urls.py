@@ -7,6 +7,7 @@ from .views import (
     StudentListView,
     ResultView,
     ResultDetailView,
+    GetResultView,
     CreateDabaseView
 )
 
@@ -23,5 +24,6 @@ urlpatterns = [
     path('result/<int:telegram_id>/<int:topic_id>/',ResultView.as_view()),
     path('result_detail/', ResultDetailView.as_view()),
     path('result_detail/<int:pk>/', ResultDetailView.as_view()),
+    path('get_result/', GetResultView.as_view()),
     path('create_database/<int:quiz_id>', CreateDabaseView.as_view())
 ]
