@@ -348,3 +348,29 @@ class PercentageView(APIView):
         if all_count == 0:
             return Response({'student': student.first_name, 'solved': 0})
         return Response({'student': student.first_name, 'solved': int(all_solved/all_count*100)})
+    
+
+class AllPercentageView(APIView):
+    def get(self, reqeust: Request, telegram_id: int, quiz_id: int) -> Response:
+        '''Calculate user how many solved for quiz_id
+
+        then returns percentage
+        '''
+        
+        student = Student.objects.get(telegram_id = telegram_id)
+        topics = Quiz.objects.get(id=quiz_id).topic.all()
+        
+        data = {}
+        for topic_id in topics:
+            results = student.result_set.filter(topic = topic_id.id)
+            all_count = 0
+            all_solved = 0
+
+            for result in results:
+                all_count += result.count
+                all_solved += result.score
+            if all_count == 0:
+                continue
+            data[topic_id.title] = int(all_solved/all_count*100)
+    
+        return Response({'student': student.first_name, 'allsolved': data})
