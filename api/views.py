@@ -330,6 +330,10 @@ class CreateDabaseView(APIView):
     
 class PercentageView(APIView):
     def get(self, reqeust: Request, telegram_id: int, topic_id: int) -> Response:
+        '''Calculate user how many solved for topic_id
+
+        then returns percentage
+        '''
         
         student = Student.objects.get(telegram_id = telegram_id)
         results = student.result_set.filter(topic = topic_id)
@@ -340,7 +344,7 @@ class PercentageView(APIView):
         for result in results:
             all_count += result.count
             all_solved += result.score
-            
+
         if all_count == 0:
             return Response({'student': student.first_name, 'solved': 0})
         return Response({'student': student.first_name, 'solved': int(all_solved/all_count*100)})
