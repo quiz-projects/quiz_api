@@ -46,6 +46,7 @@ class Option(models.Model):
 
 class Result(models.Model):
     score   = models.IntegerField(default=0)
+    count   = models.IntegerField(default=0)
     date    = models.DateTimeField(auto_now_add=True)
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE)

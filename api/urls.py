@@ -8,7 +8,8 @@ from .views import (
     ResultView,
     ResultDetailView,
     GetResultView,
-    CreateDabaseView
+    CreateDabaseView,
+    PercentageView
 )
 
 urlpatterns = [
@@ -25,5 +26,6 @@ urlpatterns = [
     path('result_detail/', ResultDetailView.as_view()),
     path('result_detail/<int:pk>/', ResultDetailView.as_view()),
     path('get_result/', GetResultView.as_view()),
-    path('create_database/<int:quiz_id>', CreateDabaseView.as_view())
+    path('create_database/<int:quiz_id>', CreateDabaseView.as_view()),
+    path('get_percentage/<int:telegram_id>/<int:topic_id>/', PercentageView.as_view())
 ]

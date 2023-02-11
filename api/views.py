@@ -119,7 +119,7 @@ class TopicListView(APIView):
 class QuestionListView(APIView):
     def get(self, request: Request, topic_id: int, count: int):
         '''
-        Returns random questions given topic_id and count (count for how many question needs to be send
+        Returns random questions given topic_id and count (count for how many question needs to be send)
         
         Also returns which quiz and topic datas
         
@@ -132,7 +132,7 @@ class QuestionListView(APIView):
         topic_filter = Topic.objects.get(id = topic_id)
 
         # Creates result for the given student and topic
-        result = Result.objects.create(student=student, topic=topic_filter)
+        result = Result.objects.create(student=student, topic=topic_filter, count=count)
 
         # Random questions with the given number which is count
         question_filter = Question.objects.filter(topic=topic_filter).order_by('?')[:count]
@@ -205,7 +205,7 @@ class GetResultView(APIView):
 
 
 class ResultView(APIView):
-    def get(self, request: Request, telegram_id, topic_id):
+    def get(self, request: Request, telegram_id: int, topic_id: int):
         '''Returns list of result data for given telegram_id and topic_id'''
 
         student = Student.objects.get(telegram_id = telegram_id)
@@ -327,3 +327,20 @@ class CreateDabaseView(APIView):
         
         serializer = TopicQuestionSerializer(topic)
         return Response(serializer.data)
+    
+class PercentageView(APIView):
+    def get(self, reqeust: Request, telegram_id: int, topic_id: int) -> Response:
+        
+        student = Student.objects.get(telegram_id = telegram_id)
+        results = student.result_set.filter(topic = topic_id)
+
+        all_count = 0
+        all_solved = 0
+
+        for result in results:
+            all_count += result.count
+            all_solved += result.score
+            
+        if all_count == 0:
+            return Response({'student': student.first_name, 'solved': 0})
+        return Response({'student': student.first_name, 'solved': int(all_solved/all_count*100)})
