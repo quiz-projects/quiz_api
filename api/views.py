@@ -374,3 +374,23 @@ class AllPercentageView(APIView):
             data[topic_id.title] = int(all_solved/all_count*100)
     
         return Response({'student': student.first_name, 'allsolved': data})
+
+class ExamView(APIView):
+    def get(self, request: Request, count: int):
+        '''Returns exam question according to count of how many
+        and rondamize of given topic ids
+        
+        request.data = {
+            "topic_ids": [11, 12]
+        }
+
+        returns
+            list of questions
+        '''
+        topic_ids = request.data.get('topic_ids', [])
+
+        questions = Question.objects.filter(topic__in = topic_ids).order_by('?')[:count]
+        serializer = QuestionSerializer(questions, many=True)
+
+        return Response(serializer.data)
+
