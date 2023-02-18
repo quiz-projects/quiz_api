@@ -61,3 +61,22 @@ class ResultDetail(models.Model):
 
     def __str__(self):
         return self.result.student.first_name
+
+class ExamResult(models.Model):
+    score   = models.IntegerField(default=0)
+    count   = models.IntegerField(default=0)
+    date    = models.DateTimeField(auto_now_add=True)
+
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    topic   = models.ManyToManyField(Topic)
+
+    def __str__(self):
+        return self.student.first_name
+    
+class ExamResultDetail(models.Model):
+    result   = models.ForeignKey(Result, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    option   = models.ForeignKey(Option, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.result.student.first_name

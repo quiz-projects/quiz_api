@@ -1,4 +1,4 @@
-from .models import Quiz, Topic, Question, Option, Student, Result, ResultDetail
+from .models import Quiz, Topic, Question, Option, Student, Result, ResultDetail, ExamResult, ExamResultDetail
 from rest_framework import serializers
 
 
@@ -63,4 +63,16 @@ class TopicQuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Topic
+        fields = '__all__'
+
+class ExamResultSerializer(serializers.ModelSerializer):
+    student = serializers.SlugRelatedField(slug_field = 'telegram_id',queryset = Student.objects.all())
+    topic = serializers.SlugRelatedField(slug_field='title',queryset = Topic.objects.all())
+    class Meta:
+        model = ExamResult
+        fields = '__all__'
+
+class ExamResultDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ExamResultDetail
         fields = '__all__'

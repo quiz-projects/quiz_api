@@ -16,7 +16,8 @@ from .serializers import (
     ResultSerializer,
     ResultDetailSerializer,
     TopicQuestionSerializer,
-    QuestionOptionSerializer
+    QuestionOptionSerializer,
+    ExamResultDetailSerializer
 )
 
 from .data_serializers import StudentsSerializer
@@ -29,7 +30,9 @@ from .models import (
     Option,
     Student,
     Result,
-    ResultDetail
+    ResultDetail,
+    ExamResult,
+    ExamResultDetail,
 )
 
 class StudentListView(APIView):
@@ -139,7 +142,6 @@ class QuestionListView(APIView):
 
         topic = TopicSerializer(topic_filter)
         questions = QuestionOptionSerializer(question_filter, many=True)
-        topic_q = TopicSerializer(topic_filter)
 
         quiz_filter = Quiz.objects.get(title = topic.data['quiz'])
         quiz = QuizSerializer(quiz_filter)
@@ -149,7 +151,7 @@ class QuestionListView(APIView):
                 'title': quiz.data['title'],
                 'description': quiz.data['description'],
                 'result': result.id,
-                'topic': topic_q.data
+                'topic': topic.data
             }
         }
 
@@ -381,16 +383,73 @@ class ExamView(APIView):
         and rondamize of given topic ids
         
         request.data = {
+            "telgram_id: 5432,
             "topic_ids": [11, 12]
         }
 
         returns
             list of questions
         '''
+
+        telegram_id = request.data.get('telegram_id')
         topic_ids = request.data.get('topic_ids', [])
+        
+        student = Student.objects.get(telegram_id=telegram_id)
+        quiz = Topic.objects.get(id = topic_ids[0]).quiz
+
+        exam = ExamResult.objects.create(student=student, count=count)
+        exam.topic.set(topic_ids)
 
         questions = Question.objects.filter(topic__in = topic_ids).order_by('?')[:count]
+        # Creates result for the given student and topic
         serializer = QuestionSerializer(questions, many=True)
 
-        return Response(serializer.data)
+        data = {
+            'quiz': {
+                'title': quiz.title,
+                'description': quiz.description,
+                'questions': serializer.data,
+                'examresult': exam.id,
+                'topic_ids': topic_ids,
+            }
+        }
 
+        return Response(data)
+
+class ExamResultDetailView(APIView):
+    def post(self, request:Request):
+        '''Creates resultdetail object for given data body
+        
+        request.data = [ 
+            {
+                "option": id,
+                "question": id,
+                "examresult": id,
+            },
+            {
+                "option": id,
+                "question": id,
+                "examresult": id,
+            }
+        ]
+        '''
+        data_list = request.data
+
+        # Addes score result for correct option id
+        for data in data_list:
+            option_id = data['option']
+            option = Option.objects.get(id = option_id)
+
+            if option.is_correct:
+                result = ExamResult.objects.get(id = data['examresult'])
+                result.score += 1
+                result.save()
+
+        # Addes resultdeatail for all list of dictionary data
+        serializer = ExamResultDetailSerializer(data=data_list, many=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors)
