@@ -69,6 +69,7 @@ class ExamResult(models.Model):
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     topic   = models.ManyToManyField(Topic)
+    current = models.ForeignKey(Topic, on_delete=models.CASCADE, related_name='current')
 
     def __str__(self):
         return self.student.first_name

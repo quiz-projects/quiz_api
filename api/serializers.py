@@ -67,7 +67,7 @@ class TopicQuestionSerializer(serializers.ModelSerializer):
 
 class ExamResultSerializer(serializers.ModelSerializer):
     student = serializers.SlugRelatedField(slug_field = 'telegram_id',queryset = Student.objects.all())
-    topic = serializers.SlugRelatedField(slug_field='title',queryset = Topic.objects.all())
+    topic = serializers.SlugRelatedField(slug_field='title',queryset = Topic.objects.all(), many=True)
     class Meta:
         model = ExamResult
         fields = '__all__'

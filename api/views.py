@@ -17,6 +17,7 @@ from .serializers import (
     ResultDetailSerializer,
     TopicQuestionSerializer,
     QuestionOptionSerializer,
+    ExamResultSerializer,
     ExamResultDetailSerializer
 )
 
@@ -383,7 +384,7 @@ class ExamView(APIView):
         and rondamize of given topic ids
         
         request.data = {
-            "telgram_id: 5432,
+            "telgram_id": 5432,
             "topic_ids": [11, 12]
         }
 
@@ -417,6 +418,15 @@ class ExamView(APIView):
         return Response(data)
 
 class ExamResultDetailView(APIView):
+    def get(self, request: Request, telegram_id: int, topic_id: int) -> Response:
+        '''Returns last exam for given telegram_id'''
+        student = Student.objects.get(telegram_id = telegram_id)
+        last_exam = ExamResult.objects.filter(student=student, current=topic_id).last()
+
+        serializer = ExamResultSerializer(last_exam)
+
+        return Response(serializer.data)
+
     def post(self, request:Request):
         '''Creates resultdetail object for given data body
         

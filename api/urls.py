@@ -41,4 +41,5 @@ urlpatterns = [
     path('get_all_percentage/<int:telegram_id>/<int:quiz_id>/', AllPercentageView.as_view()),
     path('get_exam/<int:count>/', ExamView.as_view()),
     path('exam_result/', ExamResultDetailView.as_view()),
+    path('exam_result/<int:telegram_id>/<int:topic_id>/', ExamResultDetailView.as_view()),
 ]
