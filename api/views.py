@@ -399,8 +399,9 @@ class ExamView(APIView):
         
         student = Student.objects.get(telegram_id=telegram_id)
         quiz = Topic.objects.get(id = topic_ids[0]).quiz
+        current_topic = Topic.objects.get(id = current)
 
-        exam = ExamResult.objects.create(student=student, count=count, current=current)
+        exam = ExamResult.objects.create(student=student, count=count, current=current_topic)
         exam.topic.set(topic_ids)
 
         questions = Question.objects.filter(topic__in = topic_ids).order_by('?')[:count]
