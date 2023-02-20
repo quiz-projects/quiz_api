@@ -385,7 +385,8 @@ class ExamView(APIView):
         
         request.data = {
             "telgram_id": 5432,
-            "topic_ids": [11, 12]
+            "topic_ids": [11, 12],
+            "current": 1
         }
 
         returns
@@ -394,11 +395,12 @@ class ExamView(APIView):
 
         telegram_id = request.data.get('telegram_id')
         topic_ids = request.data.get('topic_ids', [])
+        current = request.data.get('current')
         
         student = Student.objects.get(telegram_id=telegram_id)
         quiz = Topic.objects.get(id = topic_ids[0]).quiz
 
-        exam = ExamResult.objects.create(student=student, count=count)
+        exam = ExamResult.objects.create(student=student, count=count, current=current)
         exam.topic.set(topic_ids)
 
         questions = Question.objects.filter(topic__in = topic_ids).order_by('?')[:count]
