@@ -408,7 +408,7 @@ class ExamView(APIView):
 
         questions = Question.objects.filter(topic__in = topic_ids).order_by('?')[:count]
         # Creates result for the given student and topic
-        serializer = QuestionSerializer(questions, many=True)
+        serializer = QuestionOptionSerializer(questions, many=True)
 
         data = {
             'quiz': {
