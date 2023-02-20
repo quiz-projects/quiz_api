@@ -396,8 +396,10 @@ class ExamView(APIView):
         telegram_id = request.data.get('telegram_id')
         topic_ids = request.data.get('topic_ids', [])
         current = request.data.get('current')
-        
-        student = Student.objects.get(telegram_id=telegram_id)
+        try:
+            student = Student.objects.get(telegram_id=telegram_id)
+        except ObjectDoesNotExist:
+            return Response({'status': 'bad', 'data': f'{telegram_id} does not exists'})
         quiz = Topic.objects.get(id = topic_ids[0]).quiz
         current_topic = Topic.objects.get(id = current)
 
