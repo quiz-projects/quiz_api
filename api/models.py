@@ -75,7 +75,7 @@ class ExamResult(models.Model):
         return self.student.first_name
     
 class ExamResultDetail(models.Model):
-    result   = models.ForeignKey(Result, on_delete=models.CASCADE)
+    examresult   = models.ForeignKey(Result, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     option   = models.ForeignKey(Option, on_delete=models.CASCADE)
 
