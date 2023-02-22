@@ -80,4 +80,4 @@ class ExamResultDetail(models.Model):
     option   = models.ForeignKey(Option, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.result.student.first_name
+        return self.examresult.student.first_name
