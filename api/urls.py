@@ -12,7 +12,8 @@ from .views import (
     PercentageView,
     AllPercentageView,
     ExamView,
-    ExamResultDetailView
+    ExamResultDetailView,
+    AllExamPercentageView,
 )
 
 urlpatterns = [
@@ -39,6 +40,7 @@ urlpatterns = [
 
     path('get_percentage/<int:telegram_id>/<int:topic_id>/', PercentageView.as_view()),
     path('get_all_percentage/<int:telegram_id>/<int:quiz_id>/', AllPercentageView.as_view()),
+    path('get_all_exam_percentage/<int:telegram_id>/<int:quiz_id>/', AllExamPercentageView.as_view()),
     path('get_exam/<int:count>/', ExamView.as_view()),
     path('exam_result/', ExamResultDetailView.as_view()),
     path('exam_result/<int:telegram_id>/<int:topic_id>/', ExamResultDetailView.as_view()),
