@@ -390,13 +390,10 @@ class AllExamPercentageView(APIView):
         
         data = {}
         for topic_id in topics:
-            results = student.examresult_set.filter(current = topic_id.id)
-            all_count = 0
-            all_solved = 0
-
-            for result in results:
-                all_count += result.count
-                all_solved += result.score
+            results = student.examresult_set.filter(current = topic_id.id).last()
+            all_count = results.count
+            all_solved = results.score
+            
             if all_count == 0:
                 continue
             data[topic_id.title] = int(all_solved/all_count*100)
