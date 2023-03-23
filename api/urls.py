@@ -14,6 +14,7 @@ from .views import (
     ExamView,
     ExamResultDetailView,
     AllExamPercentageView,
+    ExamAttemptView
 )
 
 urlpatterns = [
@@ -44,4 +45,5 @@ urlpatterns = [
     path('get_exam/<int:count>/', ExamView.as_view()),
     path('exam_result/', ExamResultDetailView.as_view()),
     path('exam_result/<int:telegram_id>/<int:topic_id>/', ExamResultDetailView.as_view()),
+    path('get_todays_attemts/<int:telegram_id>/', ExamAttemptView.as_view()),
 ]

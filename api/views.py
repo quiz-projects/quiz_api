@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
 
-import csv
+import csv, datetime 
 
 from .serializers import (
     QuizSerializer, 
@@ -494,3 +494,12 @@ class ExamResultDetailView(APIView):
             return Response(serializer.data)
 
         return Response(serializer.errors)
+
+class ExamAttemptView(APIView):
+    def get(self, request: Request, telegram_id: int) -> Response:
+        '''Returns todays exam attempt for given telegram_id'''
+        student = Student.objects.get(telegram_id = telegram_id)
+        today = datetime.date.today()
+        attemts = ExamResult.objects.filter(student=student, date=today).count()
+
+        return Response({'attempts': attemts})
